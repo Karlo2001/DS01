@@ -10,6 +10,15 @@ import (
 
 //var input = make(chan int, 1) //receives information from forks next to this
 //var output = make(chan int, 1) //return information to be read elsewhere
+var phil1 phil
+var phil2 phil
+var phil3 phil
+var phil4 phil
+var phil5 phil
+var phil_error phil
+
+var phil_id int
+var phil_action int
 var m sync.Mutex
 var amount_eating = 0
 
@@ -22,27 +31,16 @@ type phil struct {
 }
 
 func init_phil() {
-	phil1 := phil{times_eaten: 0, id: 1, eating: false, input: make(chan int, 1), output: make(chan int, 1)}
-	phil2 := phil{times_eaten: 0, id: 2, eating: false, input: make(chan int, 1), output: make(chan int, 1)}
-	phil3 := phil{times_eaten: 0, id: 3, eating: false, input: make(chan int, 1), output: make(chan int, 1)}
-	phil4 := phil{times_eaten: 0, id: 4, eating: false, input: make(chan int, 1), output: make(chan int, 1)}
-	phil5 := phil{times_eaten: 0, id: 5, eating: false, input: make(chan int, 1), output: make(chan int, 1)}
-	//Adding go infront of the functions makes it such that they don't go into the function?
-
-	go phil1.react()
-	go phil2.react()
-	go phil3.react()
-	go phil4.react()
-	go phil5.react()
-
-	//Wait while the goroutines run
-	for {
-
-	}
+	phil1 = phil{times_eaten: 0, id: 1, eating: false, input: make(chan int, 1), output: make(chan int, 1)}
+	phil2 = phil{times_eaten: 0, id: 2, eating: false, input: make(chan int, 1), output: make(chan int, 1)}
+	phil3 = phil{times_eaten: 0, id: 3, eating: false, input: make(chan int, 1), output: make(chan int, 1)}
+	phil4 = phil{times_eaten: 0, id: 4, eating: false, input: make(chan int, 1), output: make(chan int, 1)}
+	phil5 = phil{times_eaten: 0, id: 5, eating: false, input: make(chan int, 1), output: make(chan int, 1)}
+	phil_error = phil{times_eaten: 0, id: -1, eating: false, input: make(chan int, 1), output: make(chan int, 1)}
 	//fmt.Println("Done")
 }
 
-func (philo phil) react() {
+func (philo *phil) react() {
 	var fork1 = get_fork_by_id(philo.id)
 	var fork2 = get_fork_by_id(philo.id%5 + 1)
 
@@ -64,7 +62,7 @@ func (philo phil) react() {
 			fork2.being_used = true
 			fork2.times_used++
 			amount_eating++
-			fmt.Println("Philo id: " + strconv.Itoa(philo.id) + "\t times eaten: " + strconv.Itoa(philo.times_eaten) + "\t amount eating: " + strconv.Itoa(amount_eating))
+			//fmt.Println("Philo id: " + strconv.Itoa(philo.id) + "\t times eaten: " + strconv.Itoa(philo.times_eaten) + "\t amount eating: " + strconv.Itoa(amount_eating))
 		}
 		m.Unlock()
 		if philo.eating {
@@ -79,13 +77,42 @@ func (philo phil) react() {
 			fork1.being_used = false
 			fork2.being_used = false
 			amount_eating--
-
-			//fork1.input <- I am not eating
-			//fork2.input <- I am not eating
 		}
 
 		//Test
 		//fmt.Println("fork1 ", fork1)
 		//fmt.Println("fork2 ", fork2)
 	}
+}
+
+func (philo *phil) phil_output(action int) {
+	switch action {
+	case 1:
+		fmt.Println("Number of times eaten: " + strconv.Itoa(philo.times_eaten))
+	case 2:
+		if philo.eating {
+			fmt.Println("Eating")
+		} else {
+			fmt.Println("Thinking")
+		}
+	default:
+		fmt.Println("Invalid input")
+	}
+
+}
+
+func get_phil_by_id(id int) *phil {
+	switch id {
+	case 1:
+		return &phil1
+	case 2:
+		return &phil2
+	case 3:
+		return &phil3
+	case 4:
+		return &phil4
+	case 5:
+		return &phil5
+	}
+	return &phil_error
 }

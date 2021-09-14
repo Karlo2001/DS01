@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 var input = make(chan int, 1)  //receives information from philosophers next to this
 var output = make(chan int, 1) //send to philosophers next to this
@@ -9,6 +12,7 @@ var fork2 fork
 var fork3 fork
 var fork4 fork
 var fork5 fork
+var fork_error fork
 
 type fork struct {
 	times_used int
@@ -24,21 +28,25 @@ func init_forks() {
 	fork3 = fork{times_used: 0, id: 3, being_used: false, input: make(chan int, 1), output: make(chan int, 1)}
 	fork4 = fork{times_used: 0, id: 4, being_used: false, input: make(chan int, 1), output: make(chan int, 1)}
 	fork5 = fork{times_used: 0, id: 5, being_used: false, input: make(chan int, 1), output: make(chan int, 1)}
+	fork_error = fork{times_used: 0, id: -1, being_used: false, input: make(chan int, 1), output: make(chan int, 1)}
 	//input <- 2
 	//fmt.Println(fork1.get_output(input))
 }
 
-func (f fork) react(nr int) {
+func (f *fork) react(nr int) {
 	if nr == true_nr {
 		f.being_used = true
 	}
 	fmt.Println(f.being_used)
 }
 
-func (f fork) get_output(actions <-chan int) int {
+func (f *fork) get_output(actions <-chan int) int {
 
 	num := <-actions
 	//fmt.Println(num)
+	if num == 1 {
+		return f.times_used
+	}
 	if num == 2 {
 		if f.being_used {
 			return false_nr
@@ -48,7 +56,21 @@ func (f fork) get_output(actions <-chan int) int {
 	}
 
 	return 0
+}
 
+func (f *fork) fork_output(action int) {
+	switch action {
+	case 1:
+		fmt.Println("Number of times used: " + strconv.Itoa(f.times_used))
+	case 2:
+		if f.being_used {
+			fmt.Println("Being used")
+		} else {
+			fmt.Println("Not being used")
+		}
+	default:
+		fmt.Println("Invalid input")
+	}
 }
 
 func get_fork_by_id(nr int) *fork {
@@ -67,6 +89,5 @@ func get_fork_by_id(nr int) *fork {
 	if nr == 5 {
 		return &fork5
 	}
-	fmt.Errorf("Error: id out of scope")
-	return &fork1
+	return &fork_error
 }
