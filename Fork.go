@@ -39,9 +39,7 @@ func (f fork) get_output(actions <-chan int) int {
 
 	num := <-actions
 	//fmt.Println(num)
-	if num == 1 {
-		return f.times_used
-	} else if num == 2 {
+	if num == 2 {
 		if f.being_used {
 			return false_nr
 		} else {
