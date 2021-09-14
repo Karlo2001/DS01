@@ -45,7 +45,7 @@ func (f fork) get_output(actions <-chan int) int {
 		if f.being_used {
 			return false_nr
 		} else {
-			return tru_nr
+			return true_nr
 		}
 	}
 
@@ -53,18 +53,18 @@ func (f fork) get_output(actions <-chan int) int {
 
 }
 
-func get_fork_by_id(nr int) fork {
+func get_fork_by_id(nr int) *fork {
 	if nr == 1 {
-		return fork1
+		return &fork1
 	}
 	if nr == 2 {
-		return fork2
+		return &fork2
 	}
 	if nr == 3 {
-		return fork3
+		return &fork3
 	}
 	if nr == 4 {
-		return fork4
+		return &fork4
 	}
 	if nr == 5 {
 		return &fork5

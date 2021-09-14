@@ -36,9 +36,6 @@ func (philo phil) react() {
 	var fork1 = get_fork_by_id(philo.id)
 	var fork2 = get_fork_by_id(philo.id%5 + 1)
 
-	fmt.Println(fork1)
-	fmt.Println(fork2)
-
 	fork1.input <- 2
 	fork2.input <- 2
 	isfree1 := fork1.get_output(fork1.input)
@@ -70,6 +67,7 @@ func (philo phil) react() {
 	}
 
 	//Test
-	fmt.Println(fork1.times_used)
+	fmt.Println(fork1)
+	fmt.Println(fork2)
 	m.Unlock()
 }
