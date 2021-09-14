@@ -4,11 +4,11 @@ import "fmt"
 
 var input = make(chan int, 1)  //receives information from philosophers next to this
 var output = make(chan int, 1) //send to philosophers next to this
-var fork1 fork;
-var fork2 fork;
-var fork3 fork;
-var fork4 fork;
-var fork5 fork;
+var fork1 fork
+var fork2 fork
+var fork3 fork
+var fork4 fork
+var fork5 fork
 
 type fork struct {
 	times_used int
@@ -20,11 +20,12 @@ type fork struct {
 
 func init_forks() {
 	fork1 = fork{times_used: 0, id: 1, being_used: false, input: make(chan int, 1), output: make(chan int, 1)}
-	//fork2 = fork{times_used: 0, id: 2, being_used: false, input: make(chan int, 1), output: make(chan int, 1)}
-	//fork3 = fork{times_used: 0, id: 3, being_used: false, input: make(chan int, 1), output: make(chan int, 1)}
-	//fork4 = fork{times_used: 0, id: 4, being_used: false, input: make(chan int, 1), output: make(chan int, 1)}
-	//fork5 = fork{times_used: 0, id: 5, being_used: false, input: make(chan int, 1), output: make(chan int, 1)}
-	fork1.react(5000)
+	fork2 = fork{times_used: 0, id: 2, being_used: false, input: make(chan int, 1), output: make(chan int, 1)}
+	fork3 = fork{times_used: 0, id: 3, being_used: false, input: make(chan int, 1), output: make(chan int, 1)}
+	fork4 = fork{times_used: 0, id: 4, being_used: false, input: make(chan int, 1), output: make(chan int, 1)}
+	fork5 = fork{times_used: 0, id: 5, being_used: false, input: make(chan int, 1), output: make(chan int, 1)}
+	//input <- 2
+	//fmt.Println(fork1.get_output(input))
 }
 
 func (f fork) react(nr int) {
@@ -34,11 +35,21 @@ func (f fork) react(nr int) {
 	fmt.Println(f.being_used)
 }
 
-func (f fork) get_output(action int) int {
-	f.input <- action
-	if  {
+func (f fork) get_output(actions <-chan int) int {
 
+	num := <-actions
+	if num == 1 {
+		return f.times_used
+	} else if num == 2 {
+		if f.being_used {
+			return true_nr
+		} else {
+			return false_nr
+		}
 	}
+
+	return 0
+
 }
 
 func get_fork_by_id(nr int) fork {
@@ -57,5 +68,6 @@ func get_fork_by_id(nr int) fork {
 	if nr == 5 {
 		return fork5
 	}
+	fmt.Errorf("Error: id out of scope")
 	return fork1
 }

@@ -1,17 +1,21 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math/rand"
+	"time"
+)
 
 //var input = make(chan int, 1) //receives information from forks next to this
-//var output = make(chan int, 1) //send to forks next to this
+//var output = make(chan int, 1) //return information to be read elsewhere
 
 type phil struct {
-	times_eaten int
+	times_eaten   int
 	using_fork_id int
-	id          int
-	eating      bool
-	input       chan int
-	output      chan int
+	id            int
+	eating        bool
+	input         chan int
+	output        chan int
 }
 
 func init_phil() {
@@ -25,27 +29,43 @@ func init_phil() {
 
 func (philo phil) react() {
 
-	//Check if ascending forks are available
+	//Check if adjacent forks are available
 	fork1 := get_fork_by_id(philo.id)
-	var fork2
+	var fork2 fork
 	if philo.id == 5 {
 		fork2 = get_fork_by_id(1)
+	} else {
+		fork2 = get_fork_by_id(philo.id + 1)
 	}
-	else fork2 = get_fork_by_id(philo.id+1)
-	
-	philo.input := <- 
-	philo.input := <- 
-	//Ask forks whether they are free
 
-	isfree1 := <- fork1.output
-	isfree2 := <- fork2.output
-	if isfree1 == 
-	//If both values are true -> update eating to be true and output to ascending forks
-	
+	fmt.Println(fork1)
+	fmt.Println(fork2)
+
+	inputTest := make(chan int, 2)
+	inputTest <- 2
+	//This reaches deadlock
+	isfree1 := fork1.get_output(inputTest)
+	isfree2 := fork2.get_output(inputTest)
+
+	fmt.Println(isfree1)
+
+	//If both values are true -> update eating to be true and output to adjacent forks
+	if isfree1 == true_nr && isfree2 == true_nr {
+		philo.eating = true
+		philo.times_eaten++
+		fork1.being_used = true
+		fork1.times_used++
+		fork2.being_used = true
+		fork2.times_used++
+	}
+
 	if philo.eating {
-		//fork1.input <- I am eating 
+		//fork1.input <- I am eating
 		//fork2.input <- I am eating
 		//wait a bit
+		n := rand.Intn(10)
+		time.Sleep(n)
+
 		//update eating to false
 		//fork1.input <- I am not eating
 		//fork2.input <- I am not eating
