@@ -20,7 +20,7 @@ func main() {
 	go phil4.react()
 	go phil5.react()
 
-	//Wait while the goroutines run
+	//Take input while the goroutines run
 	for {
 		fmt.Println("\nType 1 to query forks")
 		fmt.Println("Type 2 to query philosophers")

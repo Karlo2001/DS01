@@ -8,8 +8,6 @@ import (
 	"time"
 )
 
-//var input = make(chan int, 1) //receives information from forks next to this
-//var output = make(chan int, 1) //return information to be read elsewhere
 var phil1 phil
 var phil2 phil
 var phil3 phil
@@ -37,7 +35,6 @@ func init_phil() {
 	phil4 = phil{times_eaten: 0, id: 4, eating: false, input: make(chan int, 1), output: make(chan int, 1)}
 	phil5 = phil{times_eaten: 0, id: 5, eating: false, input: make(chan int, 1), output: make(chan int, 1)}
 	phil_error = phil{times_eaten: 0, id: -1, eating: false, input: make(chan int, 1), output: make(chan int, 1)}
-	//fmt.Println("Done")
 }
 
 func (philo *phil) react() {
@@ -62,12 +59,9 @@ func (philo *phil) react() {
 			fork2.being_used = true
 			fork2.times_used++
 			amount_eating++
-			//fmt.Println("Philo id: " + strconv.Itoa(philo.id) + "\t times eaten: " + strconv.Itoa(philo.times_eaten) + "\t amount eating: " + strconv.Itoa(amount_eating))
 		}
 		m.Unlock()
 		if philo.eating {
-			//fork1.input <- I am eating
-			//fork2.input <- I am eating
 			//wait a bit
 			r := rand.Intn((500 - 300)) + 300
 			time.Sleep(time.Duration(r) * time.Millisecond)
@@ -78,10 +72,6 @@ func (philo *phil) react() {
 			fork2.being_used = false
 			amount_eating--
 		}
-
-		//Test
-		//fmt.Println("fork1 ", fork1)
-		//fmt.Println("fork2 ", fork2)
 	}
 }
 

@@ -5,8 +5,6 @@ import (
 	"strconv"
 )
 
-var input = make(chan int, 1)  //receives information from philosophers next to this
-var output = make(chan int, 1) //send to philosophers next to this
 var fork1 fork
 var fork2 fork
 var fork3 fork
@@ -29,8 +27,6 @@ func init_forks() {
 	fork4 = fork{times_used: 0, id: 4, being_used: false, input: make(chan int, 1), output: make(chan int, 1)}
 	fork5 = fork{times_used: 0, id: 5, being_used: false, input: make(chan int, 1), output: make(chan int, 1)}
 	fork_error = fork{times_used: 0, id: -1, being_used: false, input: make(chan int, 1), output: make(chan int, 1)}
-	//input <- 2
-	//fmt.Println(fork1.get_output(input))
 }
 
 func (f *fork) react(nr int) {
@@ -43,7 +39,6 @@ func (f *fork) react(nr int) {
 func (f *fork) get_output(actions <-chan int) int {
 
 	num := <-actions
-	//fmt.Println(num)
 	if num == 1 {
 		return f.times_used
 	}
