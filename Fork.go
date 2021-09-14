@@ -38,13 +38,14 @@ func (f fork) react(nr int) {
 func (f fork) get_output(actions <-chan int) int {
 
 	num := <-actions
+	//fmt.Println(num)
 	if num == 1 {
 		return f.times_used
 	} else if num == 2 {
 		if f.being_used {
-			return true_nr
-		} else {
 			return false_nr
+		} else {
+			return tru_nr
 		}
 	}
 
@@ -66,8 +67,8 @@ func get_fork_by_id(nr int) fork {
 		return fork4
 	}
 	if nr == 5 {
-		return fork5
+		return &fork5
 	}
 	fmt.Errorf("Error: id out of scope")
-	return fork1
+	return &fork1
 }

@@ -3,11 +3,13 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"sync"
 	"time"
 )
 
 //var input = make(chan int, 1) //receives information from forks next to this
 //var output = make(chan int, 1) //return information to be read elsewhere
+var m sync.Mutex
 
 type phil struct {
 	times_eaten   int
@@ -23,32 +25,26 @@ func init_phil() {
 	//phil2 := phil{times_eaten: 0, id: 2, eating: false, input: make(chan int, 1), output: make(chan int, 1), using_fork_id: 0}
 	//phil3 := phil{times_eaten: 0, id: 3, eating: false, input: make(chan int, 1), output: make(chan int, 1), using_fork_id: 0}
 	//phil4 := phil{times_eaten: 0, id: 4, eating: false, input: make(chan int, 1), output: make(chan int, 1), using_fork_id: 0}
-	//phil5 := phil{times_eaten: 0, id: 5, eating: false, input: make(chan int, 1), output: make(chan int, 1), using_fork_id: 0}
+	phil5 := phil{times_eaten: 0, id: 5, eating: false, input: make(chan int, 1), output: make(chan int, 1), using_fork_id: 0}
 	phil1.react()
+	phil5.react()
 }
 
 func (philo phil) react() {
-
+	m.Lock()
 	//Check if adjacent forks are available
-	fork1 := get_fork_by_id(philo.id)
-	var fork2 fork
-	if philo.id == 5 {
-		fork2 = get_fork_by_id(1)
-	} else {
-		fork2 = get_fork_by_id(philo.id + 1)
-	}
+	var fork1 = get_fork_by_id(philo.id)
+	var fork2 = get_fork_by_id(philo.id%5 + 1)
 
 	fmt.Println(fork1)
 	fmt.Println(fork2)
 
-	inputTest := make(chan int, 2)
-	inputTest <- 2
-	//This reaches deadlock
-	isfree1 := fork1.get_output(inputTest)
-	isfree2 := fork2.get_output(inputTest)
+	fork1.input <- 2
+	fork2.input <- 2
+	isfree1 := fork1.get_output(fork1.input)
+	isfree2 := fork2.get_output(fork2.input)
 
 	fmt.Println(isfree1)
-
 	//If both values are true -> update eating to be true and output to adjacent forks
 	if isfree1 == true_nr && isfree2 == true_nr {
 		philo.eating = true
@@ -63,14 +59,17 @@ func (philo phil) react() {
 		//fork1.input <- I am eating
 		//fork2.input <- I am eating
 		//wait a bit
-		n := rand.Intn(10)
-		time.Sleep(n)
+		r := rand.Intn(10)
+		time.Sleep(time.Duration(r) * time.Microsecond)
 
 		//update eating to false
+		philo.eating = false
+
 		//fork1.input <- I am not eating
 		//fork2.input <- I am not eating
 	}
 
 	//Test
-	fmt.Println(philo.id)
+	fmt.Println(fork1.times_used)
+	m.Unlock()
 }
