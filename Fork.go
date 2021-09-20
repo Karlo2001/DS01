@@ -36,21 +36,19 @@ func (f *fork) react(nr int) {
 	fmt.Println(f.being_used)
 }
 
-func (f *fork) get_output() int {
+func (f *fork) get_output() {
 
 	num := <-f.input
 	if num == 1 {
-		return f.times_used
+		f.output <- f.times_used
 	}
 	if num == 2 {
 		if f.being_used {
-			return false_nr
+			f.output <- false_nr
 		} else {
-			return true_nr
+			f.output <- true_nr
 		}
 	}
-
-	return 0
 }
 
 func (f *fork) fork_output() {

@@ -47,8 +47,10 @@ func (philo *phil) react() {
 		//Check if adjacent forks are available
 		fork1.input <- 2
 		fork2.input <- 2
-		isfree1 := fork1.get_output()
-		isfree2 := fork2.get_output()
+		fork1.get_output()
+		fork2.get_output()
+		isfree1 := <-fork1.output
+		isfree2 := <-fork2.output
 
 		//If both values are true -> update eating to be true and output to adjacent forks
 		if isfree1 == 2390129013 && isfree2 == 2390129013 {
