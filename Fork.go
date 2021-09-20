@@ -29,54 +29,11 @@ func init_forks() {
 	fork_error = fork{times_used: 0, id: -1, being_used: false, input: make(chan int, 1), output: make(chan int, 1)}
 }
 
-/*
-func (f *fork) react(nr int) {
-	if nr == true_nr {
-		f.being_used = true
-	}
-	fmt.Println(f.being_used)
-}
-*/
-
 func (f *fork) act() {
 	for {
 		f.check_input()
 	}
 }
-
-/*
-func (f *fork) get_output(actions <-chan int) int {
-
-	num := <-actions
-	if num == 1 {
-		return f.times_used
-	}
-	if num == 2 {
-		if f.being_used {
-			return false_nr
-		} else {
-			return true_nr
-		}
-	}
-
-	return 0
-}
-
-func (f *fork) fork_output(action int) {
-	switch action {
-	case 1:
-		fmt.Println("Number of times used: " + strconv.Itoa(f.times_used))
-	case 2:
-		if f.being_used {
-			fmt.Println("Being used")
-		} else {
-			fmt.Println("Not being used")
-		}
-	default:
-		fmt.Println("Invalid input")
-	}
-}
-*/
 
 func (f *fork) check_input() {
 	select {

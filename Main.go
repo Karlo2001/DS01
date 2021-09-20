@@ -44,7 +44,6 @@ func main() {
 				fmt.Scanln(&phil_action)
 
 				phil_query()
-				//selected_phil.phil_output(phil_action)
 			} else {
 				fmt.Println("Selected ID is not valid")
 			}
@@ -58,7 +57,6 @@ func main() {
 				fmt.Scanln(&fork_action)
 
 				fork_query()
-				//selected_fork.fork_output(fork_action)
 			}
 		} else if fork_or_philo == 0 {
 			os.Exit(0)
