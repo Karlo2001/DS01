@@ -1,8 +1,7 @@
 package main
 
 import (
-	"fmt"
-	"strconv"
+	"sync"
 )
 
 var fork1 fork
@@ -18,6 +17,7 @@ type fork struct {
 	being_used bool
 	input      chan int
 	output     chan int
+	fm         sync.Mutex
 }
 
 func init_forks() {
@@ -29,13 +29,22 @@ func init_forks() {
 	fork_error = fork{times_used: 0, id: -1, being_used: false, input: make(chan int, 1), output: make(chan int, 1)}
 }
 
+/*
 func (f *fork) react(nr int) {
 	if nr == true_nr {
 		f.being_used = true
 	}
 	fmt.Println(f.being_used)
 }
+*/
 
+func (f *fork) act() {
+	for {
+		f.check_input()
+	}
+}
+
+/*
 func (f *fork) get_output(actions <-chan int) int {
 
 	num := <-actions
@@ -65,6 +74,23 @@ func (f *fork) fork_output(action int) {
 		}
 	default:
 		fmt.Println("Invalid input")
+	}
+}
+*/
+
+func (f *fork) check_input() {
+	select {
+	case in := <-f.input:
+		if in == 1 {
+			f.output <- f.times_used
+		} else if in == 2 {
+			if f.being_used {
+				f.output <- true_nr
+			} else {
+				f.output <- false_nr
+			}
+		}
+	default:
 	}
 }
 

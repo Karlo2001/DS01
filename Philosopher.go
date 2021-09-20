@@ -1,10 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"math/rand"
-	"strconv"
-	"sync"
+	//"sync"
 	"time"
 )
 
@@ -17,7 +15,8 @@ var phil_error phil
 
 var phil_id int
 var phil_action int
-var m sync.Mutex
+
+//var m sync.Mutex
 var amount_eating = 0
 
 type phil struct {
@@ -42,16 +41,18 @@ func (philo *phil) react() {
 	var fork2 = get_fork_by_id(philo.id%5 + 1)
 
 	for {
-		m.Lock()
+		//m.Lock()
+		fork1.fm.Lock()
+		fork2.fm.Lock()
 
 		//Check if adjacent forks are available
-		fork1.input <- 2
-		fork2.input <- 2
-		isfree1 := fork1.get_output(fork1.input)
-		isfree2 := fork2.get_output(fork2.input)
+		//fork1.input <- 2
+		//fork2.input <- 2
+		//isfree1 := fork1.get_output(fork1.input)
+		//isfree2 := fork2.get_output(fork2.input)
 
 		//If both values are true -> update eating to be true and output to adjacent forks
-		if isfree1 == 2390129013 && isfree2 == 2390129013 {
+		if !fork1.being_used && !fork2.being_used {
 			philo.eating = true
 			philo.times_eaten++
 			fork1.being_used = true
@@ -60,7 +61,10 @@ func (philo *phil) react() {
 			fork2.times_used++
 			amount_eating++
 		}
-		m.Unlock()
+		//m.Unlock()
+		fork1.fm.Unlock()
+		fork2.fm.Unlock()
+
 		if philo.eating {
 			//wait a bit
 			r := rand.Intn((500 - 300)) + 300
@@ -72,9 +76,12 @@ func (philo *phil) react() {
 			fork2.being_used = false
 			amount_eating--
 		}
+
+		philo.check_input()
 	}
 }
 
+/*
 func (philo *phil) phil_output(action int) {
 	switch action {
 	case 1:
@@ -89,6 +96,23 @@ func (philo *phil) phil_output(action int) {
 		fmt.Println("Invalid input")
 	}
 
+}
+*/
+
+func (philo *phil) check_input() {
+	select {
+	case in := <-philo.input:
+		if in == 1 {
+			philo.output <- philo.times_eaten
+		} else if in == 2 {
+			if philo.eating {
+				philo.output <- true_nr
+			} else {
+				philo.output <- false_nr
+			}
+		}
+	default:
+	}
 }
 
 func get_phil_by_id(id int) *phil {
