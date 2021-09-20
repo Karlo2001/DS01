@@ -1,1 +1,1 @@
-# DS01
+# DS01 - Group "sokrates"
