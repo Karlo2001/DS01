@@ -53,7 +53,7 @@ func (philo *phil) react() {
 		isfree2 := <-fork2.output
 
 		//If both values are true -> update eating to be true and output to adjacent forks
-		if isfree1 == 2390129013 && isfree2 == 2390129013 {
+		if isfree1 == true_nr && isfree2 == true_nr {
 			philo.eating = true
 			philo.times_eaten++
 			fork1.being_used = true
@@ -81,9 +81,15 @@ func (philo *phil) phil_output() {
 	action := <-philo.input
 	switch action {
 	case 1:
-		fmt.Println("Number of times eaten: " + strconv.Itoa(philo.times_eaten))
+		philo.input <- 1
+		philo.phil_get_output()
+		times_eaten := <-philo.output
+		fmt.Println("Number of times eaten: " + strconv.Itoa(times_eaten))
 	case 2:
-		if philo.eating {
+		philo.input <- 2
+		philo.phil_get_output()
+		eating := <-philo.output
+		if eating == true_nr {
 			fmt.Println("Eating")
 		} else {
 			fmt.Println("Thinking")
@@ -91,7 +97,21 @@ func (philo *phil) phil_output() {
 	default:
 		fmt.Println("Invalid input")
 	}
+}
 
+func (philo *phil) phil_get_output() {
+	action := <-philo.input
+	fmt.Println(action)
+	switch action {
+	case 1:
+		philo.output <- philo.times_eaten
+	case 2:
+		if philo.eating {
+			philo.output <- true_nr
+		} else {
+			philo.output <- false_nr
+		}
+	}
 }
 
 func get_phil_by_id(id int) *phil {
