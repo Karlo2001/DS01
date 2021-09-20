@@ -47,8 +47,8 @@ func (philo *phil) react() {
 		//Check if adjacent forks are available
 		fork1.input <- 2
 		fork2.input <- 2
-		isfree1 := fork1.get_output(fork1.input)
-		isfree2 := fork2.get_output(fork2.input)
+		isfree1 := fork1.get_output()
+		isfree2 := fork2.get_output()
 
 		//If both values are true -> update eating to be true and output to adjacent forks
 		if isfree1 == 2390129013 && isfree2 == 2390129013 {
@@ -75,7 +75,8 @@ func (philo *phil) react() {
 	}
 }
 
-func (philo *phil) phil_output(action int) {
+func (philo *phil) phil_output() {
+	action := <-philo.input
 	switch action {
 	case 1:
 		fmt.Println("Number of times eaten: " + strconv.Itoa(philo.times_eaten))

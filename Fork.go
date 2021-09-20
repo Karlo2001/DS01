@@ -36,9 +36,9 @@ func (f *fork) react(nr int) {
 	fmt.Println(f.being_used)
 }
 
-func (f *fork) get_output(actions <-chan int) int {
+func (f *fork) get_output() int {
 
-	num := <-actions
+	num := <-f.input
 	if num == 1 {
 		return f.times_used
 	}
@@ -53,7 +53,8 @@ func (f *fork) get_output(actions <-chan int) int {
 	return 0
 }
 
-func (f *fork) fork_output(action int) {
+func (f *fork) fork_output() {
+	action := <-f.input
 	switch action {
 	case 1:
 		fmt.Println("Number of times used: " + strconv.Itoa(f.times_used))

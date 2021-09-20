@@ -33,7 +33,8 @@ func main() {
 				fmt.Println("Type 1 for nr times eaten")
 				fmt.Println("Type 2 for eating or thinking")
 				fmt.Scanln(&phil_action)
-				selected_phil.phil_output(phil_action)
+				selected_phil.input <- phil_action
+				selected_phil.phil_output()
 			} else {
 				fmt.Println("Selected ID is not valid")
 			}
@@ -45,7 +46,8 @@ func main() {
 				fmt.Println("Type 1 for nr times used")
 				fmt.Println("Type 2 for being used")
 				fmt.Scanln(&fork_action)
-				selected_fork.fork_output(fork_action)
+				selected_fork.input <- fork_action
+				selected_fork.fork_output()
 			}
 		}
 	}
